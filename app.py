@@ -1,173 +1,177 @@
-# ══════════════════════════════════════════════════════════════════════════════
-# Project  : VAJRA-SOVEREIGN DEFENSE OS — ULTIMATE HYPERION (OMEGA EDITION)
-# File     : app.py (Complete Autonomous Multi-Agent Command Terminal)
-# Developer: Veerababu Veera (AI Specialist & Researcher)
-# Science  : Einstein SR · Ramanujan Partitions · Heisenberg Uncertainty
-# Version  : 5.0.0-HYPERION
-# ══════════════════════════════════════════════════════════════════════════════
-
 import streamlit as st
-import os
-import json
-import time
-import numpy as np
-import math
-import hashlib
-import random
-from datetime import datetime, timedelta
-from collections import deque
-import plotly.graph_objects as go
 import pandas as pd
+import time
+import random
 
-# ── CORE ENGINES ─────────────────────────────────────────────────────────────
+# --- Page Configuration ---
+st.set_config = st.set_page_config(
+    page_title="VEERABABU VEERA | SOVEREIGN AI",
+    page_icon="🏛️",
+    layout="wide"
+)
 
-class VajraLTS:
-    """Long-Range Tactical Scope — Relativistic Physics Engine."""
-    def apply_lorentz_gamma(self, v_ms: float) -> float:
-        c = 299792458
-        beta = min(abs(v_ms) / c, 0.999999)
-        return 1.0 / math.sqrt(1.0 - beta ** 2)
-
-    def compute_trajectory(self, v, el):
-        g = 9.81
-        theta = math.radians(el)
-        t_flight = (2 * v * math.sin(theta)) / g
-        ts = np.linspace(0, t_flight, 100)
-        x = v * math.cos(theta) * ts
-        y = v * math.sin(theta) * ts - 0.5 * g * ts**2
-        return x, y
-
-class VajraShield:
-    """Ramanujan-Shield — Quantum Resistant Cryptography."""
-    def ramanujan_partition_lock(self, data_str: str) -> str:
-        partitions = [1, 1, 2, 3, 5, 7, 11, 15, 22, 30] # Ramanujan p(n) sequence
-        cipher = bytearray()
-        for i, char in enumerate(data_str.encode()):
-            cipher.append(char ^ (partitions[i % len(partitions)] & 0xFF))
-        return cipher.hex().upper()
-
-# ══════════════════════════════════════════════════════════════════════════════
-# UI & STYLING (CINEMATIC GLASSMORPHISM)
-# ══════════════════════════════════════════════════════════════════════════════
-
-st.set_page_config(page_title="VAJRA-SOVEREIGN | OMEGA", layout="wide", initial_sidebar_state="collapsed")
-
+# --- Advanced Cyber-Sovereign UI (Custom CSS) ---
 st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Share+Tech+Mono&display=swap');
-    
-    :root { --neon-green: #00ff41; --deep-obsidian: #000500; --active-cyan: #00e5ff; }
-
-    .stApp {
-        background: radial-gradient(circle at center, #001500 0%, #000500 100%) !important;
-        color: var(--neon-green) !important;
-        font-family: 'Share Tech Mono', monospace !important;
+    <style>
+    /* Global Background & Typography */
+    .main { 
+        background: linear-gradient(135deg, #050a14 0%, #02050a 100%); 
+        color: #e0e0e0; 
+        font-family: 'Inter', sans-serif; 
     }
-
-    .glass-panel {
-        background: rgba(0, 40, 0, 0.2);
-        border: 1px solid rgba(0, 255, 65, 0.3);
-        border-radius: 10px;
-        padding: 20px;
+    
+    /* Neon Glassmorphism Cards */
+    .sovereign-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        border-radius: 15px;
+        padding: 25px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        margin-bottom: 20px;
+        transition: 0.3s ease-in-out;
+    }
+    .sovereign-card:hover {
+        border: 1px solid #00d4ff;
+        transform: translateY(-5px);
+        background: rgba(0, 212, 255, 0.05);
+    }
+    
+    /* Glowing Title Styling */
+    .glow-text {
+        color: #00d4ff;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        letter-spacing: 2px;
+        text-transform: uppercase;
     }
 
-    h1 {
-        font-family: 'Orbitron', sans-serif !important;
-        font-weight: 900 !important;
-        letter-spacing: 5px;
-        text-shadow: 0 0 20px var(--neon-green);
-        text-align: center;
-        color: var(--neon-green);
+    /* Sidebar Customization */
+    section[data-testid="stSidebar"] {
+        background-color: #02050a !important;
+        border-right: 1px solid rgba(0, 212, 255, 0.2);
     }
-
-    .blink { animation: blinker 1.5s linear infinite; }
-    @keyframes blinker { 50% { opacity: 0; } }
-</style>
-""", unsafe_allow_html=True)
-
-# ── SESSION INITIALIZATION ────────────────────────────────────────────────────
-
-if 'engine' not in st.session_state:
-    st.session_state.engine = VajraLTS()
-    st.session_state.shield = VajraShield()
-    st.session_state.start = datetime.now()
-
-# ══════════════════════════════════════════════════════════════════════════════
-# MAIN INTERFACE
-# ══════════════════════════════════════════════════════════════════════════════
-
-# Top Banner
-uptime = str(datetime.now() - st.session_state.start).split('.')[0]
-st.markdown(f"""
-<div style='text-align:center; border-bottom:1px solid #00ff41; padding:10px; margin-bottom:20px;'>
-    <span style='color:#00e5ff'>SYSTEM: VAJRA-SOVEREIGN v5.0</span> | 
-    <span style='color:#00ff41'>STATUS: ONLINE</span> | 
-    <span class='blink' style='color:red'>LIVE SENSOR FEED</span> | 
-    UPTIME: {uptime}
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("<h1>VAJRA-SOVEREIGN: DEFENSE OS</h1>", unsafe_allow_html=True)
-
-col1, col2 = st.columns([1, 1.5])
-
-with col1:
-    st.markdown("### 🔱 LONG-RANGE TACTICAL SCOPE")
-    
-    # ఇక్కడ మీ రిపోజిటరీలో ఉన్న ఇమేజ్ పేరును అప్‌డేట్ చేశాను
-    img_path = "Screenshot 2025-01-24 071015.png"
-    
-    if os.path.exists(img_path):
-        st.image(img_path, caption="Sovereign Field Reconnaissance", use_container_width=True)
-    else:
-        st.warning("⚠️ Tactical Imagery Loading... (Check GitHub File Name)")
-
-    # 
-
-    # Telemetry Data
-    vel = random.uniform(1500, 3500)
-    gamma = st.session_state.engine.apply_lorentz_gamma(vel)
-    
-    st.markdown(f"""
-    <div class='glass-panel'>
-        <b>TARGET TELEMETRY:</b><br>
-        • VELOCITY: {vel:.2f} m/s<br>
-        • LORENTZ FACTOR (γ): {gamma:.6f}<br>
-        • THREAT LEVEL: <span style='color:red'>CRITICAL</span>
-    </div>
+    </style>
     """, unsafe_allow_html=True)
 
-with col2:
-    st.markdown("### 🎯 INTERCEPT TRAJECTORY (LAGRANGIAN)")
+# --- Sidebar: Identity & Live Research ---
+with st.sidebar:
+    # Use your professional photo
+    st.image("image_9281fe.jpg", use_container_width=True) 
+    st.markdown("<h2 class='glow-text'>VEERABABU VEERA</h2>", unsafe_allow_html=True)
+    st.markdown("### `AI MULTI-DOMAIN ARCHITECT`")
+    st.write("---")
+    st.success("◆ EX-ACCENTURE | INFOSYS | TECH MAHINDRA ◆")
     
-    # Trajectory Plot
-    x, y = st.session_state.engine.compute_trajectory(vel, 45)
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x, y=y, mode='lines', line=dict(color='#00ff41', width=3), name='Projectile Path'))
-    fig.update_layout(
-        template="plotly_dark", 
-        paper_bgcolor='rgba(0,0,0,0)', 
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis_title="Range (m)", yaxis_title="Altitude (m)"
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    st.subheader("🔬 2026 Research Pulse")
+    st.info("Agentic ROI Orchestration")
+    st.progress(92, text="Vajra-Sovereign Security")
+    st.progress(85, text="Astra-Oracle Intelligence")
+    
+    st.write("---")
+    # --- Live System Pulse ---
+    st.subheader("🛰️ System Logs")
+    log_placeholder = st.empty()
+    logs = [
+        "[OK] Vajra-Sovereign: Shield Active",
+        "[OK] Astra-Oracle: Swarm Synced",
+        "[OK] Netra: Vision Feed Live",
+        "[OK] Ramanujan: Crypt-Layer Valid",
+        "[PING] Sentinel: Cloud Secure"
+    ]
+    log_placeholder.code(f"STATUS: {random.choice(logs)}\nUplink: Stable")
+    
+    st.write("---")
+    st.caption("📍 Addateegala, Andhra Pradesh")
+    st.caption("© 2026 Sovereign Consultancy Protocol")
 
-    # 
+# --- Hero Section ---
+col_h1, col_h2 = st.columns([2, 1])
+with col_h1:
+    st.markdown("<h1 class='glow-text'>Sovereign AI Command Center</h1>", unsafe_allow_html=True)
+    st.markdown("""
+    ### *Transforming Legacy Friction into Intelligent ROI.*
+    I engineer high-yield, secure AI ecosystems for the autonomous enterprise.
+    """)
+with col_h2:
+    st.write("###")
+    st.latex(r"Value = \sum (\text{Security}_{Vajra} \times \text{Intel}_{Astra})")
 
-# Footer & Encryption
-st.markdown("---")
-raw_log = f"LOG-{time.time()}-THREAT-DETECTED"
-encrypted = st.session_state.shield.ramanujan_partition_lock(raw_log)
+# --- Project Intelligence Layers ---
+st.write("---")
+st.header("🏹 Strategic Project Suites")
 
-st.markdown(f"""
-<div style='font-family:monospace; font-size:10px; color:rgba(0,255,65,0.5)'>
-    RAMANUJAN-ENCRYPTED HASH: {encrypted}<br>
-    DEVELOPED BY VEERABABU VEERA | RESEARCH SECTOR: HYDERABAD, INDIA
-</div>
-""", unsafe_allow_html=True)
+tab1, tab2, tab3, tab4 = st.tabs(["🛡️ VAJRA SUITE", "🎯 ASTRA SUITE", "🧬 RAMANUJAN-KALAM", "⚖️ IMPACT"])
 
-if st.button("🚀 EXECUTE ASTRA-ORACLE COUNTERMEASURE"):
-    st.balloons()
-    st.success("VAJRA-NETRA: INTERCEPTOR DISPATCHED SUCCESSFULLY.")
+with tab1:
+    st.subheader("Defensive & Tactical Infrastructure")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("""<div class="sovereign-card">
+            <h3>VAJRA SOVEREIGN</h3>
+            <p>Governance layer for enterprise LLMs. Zero-leakage data sovereignty.</p>
+            <code>Status: Operational</code>
+        </div>""", unsafe_allow_html=True)
+    with c2:
+        st.markdown("""<div class="sovereign-card">
+            <h3>VAJRA NETRA</h3>
+            <p>Real-time computer vision for industrial monitoring and threat synthesis.</p>
+            <code>Latency: < 40ms</code>
+        </div>""", unsafe_allow_html=True)
+
+with tab2:
+    st.subheader("Predictive Strategic Oracles")
+    st.markdown("""<div class="sovereign-card">
+        <h3>ASTRA-ORACLE v2.4</h3>
+        <p>Multi-agent swarm for logistics optimization and market volatility modeling.</p>
+    </div>""", unsafe_allow_html=True)
+    
+    # --- Interactive Case Study ---
+    with st.expander("🔍 VIEW CASE STUDY: LOGISTICS OPTIMIZATION", expanded=True):
+        st.info("Problem: $1.2M monthly overruns due to lead-time variance.")
+        col_ca, col_cb = st.columns(2)
+        with col_ca:
+            st.markdown("**Intervention:**")
+            st.write("* Deployed 15 Autonomous Agents\n* Real-time OSINT synthesis\n* Predictive port-congestion modeling")
+        with col_cb:
+            st.markdown("**Mathematical Model:**")
+            st.latex(r"P(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}")
+        st.write("---")
+        m1, m2, m3 = st.columns(3)
+        m1.metric("OpEx Savings", "$340K/Mo")
+        m2.metric("Variance", "-18%")
+        m3.metric("Accuracy", "94.2%")
+
+with tab3:
+    st.subheader("Scientific & Mathematical Rigor")
+    st.write("Advanced algorithmic research bridging classical math and AI.")
+    st.latex(r"R_{Shield} = \oint \frac{\text{Encryption}}{\text{Entropy}} \, d\theta")
+    st.markdown("* **RAMANUJAN SHIELD:** Algorithmic Cryptography.\n* **KALAM RK-V1:** Scientific computing and aerospace trajectory models.")
+
+with tab4:
+    st.subheader("Humanitarian & Legal Pillars")
+    st.markdown("""<div class="sovereign-card">
+        <h3>RAJARAO LEGAL & JEEVAKAVACHA</h3>
+        <p>Applying AI to healthcare diagnostics and automated legal compliance.</p>
+    </div>""", unsafe_allow_html=True)
+
+# --- The ROI Simulator ---
+st.write("---")
+st.header("💹 AI Transformation ROI Simulator")
+with st.container():
+    sc1, sc2 = st.columns([1, 2])
+    with sc1:
+        opex = st.number_input("Current Annual OpEx (USD $)", value=1000000)
+        eff = st.slider("Target Automation Efficiency", 0.1, 0.8, 0.35)
+    with sc2:
+        annual_savings = opex * eff
+        st.markdown(f"""
+        <div class="sovereign-card" style='text-align: center'>
+            <h2>Projected Annual Savings: <span style='color:#00d4ff'>${annual_savings:,.2f}</span></h2>
+            <p>Calculated for a 6-month implementation cycle.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.progress(eff, f"Efficiency Profile: {int(eff*100)}%")
+
+# --- Footer ---
+st.write("---")
+st.markdown("<center><b>AUTHENTICATED ACCESS ONLY | © 2026 VEERABABU VEERA | SOVEREIGN CONSULTANCY PROTOCOL</b></center>", unsafe_allow_html=True)
